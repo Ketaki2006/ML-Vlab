@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+    <linearGradient id="planeGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#334155" stop-opacity="0.4"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Projection Plane (Low Dimensional 2D Subspace) -->
+  <polygon points="15,75 55,88 85,68 45,55" fill="url(#planeGrad)" stroke="#6366F1" stroke-width="1.5" stroke-dasharray="3 2" />
+
+  <!-- Projection Rays from High-Dim to Low-Dim -->
+  <line x1="30" y1="25" x2="35" y2="72" stroke="#8B5CF6" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>
+  <line x1="70" y1="20" x2="65" y2="65" stroke="#EC4899" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>
+  <line x1="50" y1="38" x2="52" y2="77" stroke="#A855F7" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>
+
+  <!-- High-Dimensional Manifold / Simplex (3D Hypercube Face) -->
+  <polygon points="30,25 70,20 80,45 40,50" fill="none" stroke="url(#primaryGrad)" stroke-width="2" />
+  <polygon points="40,50 80,45 65,65 25,70" fill="none" stroke="#8B5CF6" stroke-width="1" opacity="0.4" />
+
+  <!-- High-Dimensional Data Nodes -->
+  <circle cx="30" cy="25" r="4.5" fill="#8B5CF6" filter="url(#glow)"/>
+  <circle cx="70" cy="20" r="4.5" fill="#EC4899" filter="url(#glow)"/>
+  <circle cx="80" cy="45" r="3.5" fill="#6366F1"/>
+  <circle cx="40" cy="50" r="3.5" fill="#A855F7"/>
+  <circle cx="50" cy="38" r="4" fill="#F43F5E" filter="url(#glow)"/>
+
+  <!-- Projected 2D Points on Subspace -->
+  <circle cx="35" cy="72" r="3.5" fill="#10B981" filter="url(#glow)"/>
+  <circle cx="65" cy="65" r="3.5" fill="#F43F5E" filter="url(#glow)"/>
+  <circle cx="52" cy="77" r="3" fill="#10B981"/>
+  <circle cx="42" cy="68" r="2.5" fill="#10B981"/>
+  <circle cx="58" cy="72" r="3" fill="#F43F5E"/>
+</svg>

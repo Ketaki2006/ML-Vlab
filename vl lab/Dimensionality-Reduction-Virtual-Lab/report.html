@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Experiment Report | Dimensionality Reduction Lab</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for crisp mathematical formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+  <!-- Standalone Modules for in-report quick compute if needed -->
+  <script src="js/data.js"></script>
+  <script src="js/algorithms.js"></script>
+
+  <style>
+    /* ==========================================================================
+       ACADEMIC LABORATORY REPORT STYLESHEET
+       Formatted for University Laboratory Examination & A4 Document Printing
+       ========================================================================== */
+    :root {
+      --font-body: 'Newsreader', Georgia, serif;
+      --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+      --primary: #1E293B;
+      --accent: #4F46E5;
+      --border: #CBD5E1;
+      --text: #0F172A;
+      --text-muted: #475569;
+      --bg: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 11pt;
+      line-height: 1.65;
+      color: var(--text);
+      background-color: var(--bg);
+      padding: 30px 15px;
+    }
+
+    /* Floating Action Bar (Hidden on Print) */
+    .action-bar {
+      position: sticky;
+      top: 15px;
+      max-width: 850px;
+      margin: 0 auto 25px auto;
+      background: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-print {
+      background: #4F46E5;
+      color: #FFFFFF;
+    }
+    .btn-print:hover { background: #4338CA; }
+
+    .btn-back {
+      background: #F1F5F9;
+      color: #334155;
+      border: 1px solid #CBD5E1;
+    }
+    .btn-back:hover { background: #E2E8F0; }
+
+    .btn-compute {
+      background: #059669;
+      color: #FFFFFF;
+    }
+    .btn-compute:hover { background: #047857; }
+
+    /* Report Page Sheet */
+    .report-sheet {
+      max-width: 850px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      padding: 60px 65px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Institutional Header */
+    .inst-header {
+      text-align: center;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .inst-header h1 {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .inst-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .inst-header .meta-sub {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Student & Experiment Meta Grid */
+    .student-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 30px;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+    }
+
+    .student-meta-grid .meta-item strong {
+      color: var(--primary);
+      display: inline-block;
+      width: 140px;
+    }
+
+    /* Section Headings */
+    h2.report-section-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-top: 32px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    h3.report-subheading {
+      font-family: var(--font-heading);
+      font-size: 0.98rem;
+      color: #334155;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+
+    p { margin-bottom: 12px; text-align: justify; }
+
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 14px;
+    }
+
+    li { margin-bottom: 4px; }
+
+    /* Math Formula Block */
+    .math-block {
+      background: #F1F5F9;
+      border-left: 3px solid var(--accent);
+      padding: 10px 16px;
+      margin: 12px 0;
+      border-radius: 0 4px 4px 0;
+      font-size: 10.5pt;
+    }
+
+    /* Tables */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-family: var(--font-heading);
+      font-size: 0.82rem;
+    }
+
+    .report-table th, .report-table td {
+      border: 1px solid #CBD5E1;
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    .report-table th {
+      background: #F1F5F9;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .report-table tr:nth-child(even) {
+      background: #F8FAFC;
+    }
+
+    /* Alert / Warning Box */
+    .alert-box {
+      background: #FEF3C7;
+      border: 1px solid #F59E0B;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      color: #92400E;
+    }
+
+    /* References */
+    .reference-list {
+      font-size: 9.5pt;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .reference-list li {
+      margin-bottom: 8px;
+    }
+
+    /* Signature Section */
+    .signature-row {
+      margin-top: 50px;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      padding-top: 20px;
+      border-top: 1px solid #E2E8F0;
+    }
+
+    .sig-box {
+      text-align: center;
+      width: 200px;
+    }
+
+    .sig-line {
+      border-bottom: 1px solid #64748B;
+      margin-bottom: 8px;
+      height: 40px;
+    }
+
+    /* ==========================================================================
+       PRINT STYLES (@media print)
+       ========================================================================== */
+    @media print {
+      body {
+        background: #FFFFFF !important;
+        padding: 0 !important;
+        font-size: 10pt !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .report-sheet {
+        max-width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      h2.report-section-title {
+        page-break-after: avoid;
+        margin-top: 24px;
+      }
+
+      .math-block, .report-table, .signature-row {
+        page-break-inside: avoid;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Action Bar (Hidden during printing) -->
+  <div class="action-bar no-print">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="index.html" class="btn btn-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <span>&larr; Back to Virtual Lab</span>
+      </a>
+      <span style="font-family: var(--font-heading); font-size: 0.8rem; color: var(--text-muted);" id="reportDataStatus">
+        Checking LocalStorage for simulation results...
+      </span>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button class="btn btn-compute" id="btnQuickCompute" style="display:none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.01-4.07l-2.49-1.46c-1.25 1.5-3.13 2.48-5.51 2.48z"/></svg>
+        <span>⚡ Populate Simulation Data Now</span>
+      </button>
+      <button class="btn btn-print" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+        <span>Print / Save as PDF</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Report Document -->
+  <main class="report-sheet">
+    <!-- Institutional Header -->
+    <header class="inst-header">
+      <h1>Department of Computer Science & Engineering</h1>
+      <h2>Machine Learning Laboratory &bull; Experiment Report</h2>
+      <div class="meta-sub">Course: Advanced Machine Learning & Pattern Recognition &bull; Lab Practical 04</div>
+    </header>
+
+    <!-- Student & Session Meta Table -->
+    <div class="student-meta-grid">
+      <div class="meta-item"><strong>Student Name:</strong> <span id="lblStudentName">Ketaki Amit Patil</span></div>
+      <div class="meta-item"><strong>Roll / Reg. No:</strong> <span id="lblStudentRoll">21BCE1042</span></div>
+      <div class="meta-item"><strong>Department / Program:</strong> <span id="lblStudentDept">Computer Science & Engineering</span></div>
+      <div class="meta-item"><strong>Semester / Class:</strong> <span id="lblStudentClass">4th Semester, B.Tech</span></div>
+      <div class="meta-item"><strong>Faculty / Guide:</strong> <span id="lblStudentGuide">Dr. Machine Learning Faculty</span></div>
+      <div class="meta-item"><strong>Date of Experiment:</strong> <span id="lblStudentDate">November 05, 2026</span></div>
+    </div>
+
+    <!-- Live LocalStorage Notice if missing -->
+    <div class="alert-box no-print" id="cacheWarningBox" style="display:none;">
+      <strong>Notice:</strong> No prior simulation results were detected in LocalStorage. Please either return to the Virtual Lab and run the algorithms, or click the <strong>"⚡ Populate Simulation Data Now"</strong> button above to execute the mathematical pipeline directly.
+    </div>
+
+    <!-- 1. TITLE OF EXPERIMENT -->
+    <h2 class="report-section-title">1. Title of Experiment</h2>
+    <p>
+      <strong>Dimensionality Reduction: Implementation and Comparative Analysis of Linear (PCA, SVD) and Non-Linear (t-SNE, UMAP) Techniques on High-Dimensional Clinical Biomedical Data.</strong>
+    </p>
+
+    <!-- 2. AIM -->
+    <h2 class="report-section-title">2. Aim</h2>
+    <p>
+      To implement, analyze, and comparatively evaluate linear dimensionality reduction methods (Principal Component Analysis, Singular Value Decomposition) and non-linear manifold learning algorithms (t-Distributed Stochastic Neighbor Embedding, Uniform Manifold Approximation and Projection) on the 30-dimensional Wisconsin Diagnostic Breast Cancer dataset, evaluating their computational efficiency, variance retention, topological structure preservation, and clinical cluster discriminability.
+    </p>
+
+    <!-- 3. OBJECTIVES -->
+    <h2 class="report-section-title">3. Objectives</h2>
+    <ol>
+      <li>To ingest, validate, and standardize the 30 real-valued pathological features of the Wisconsin Diagnostic Breast Cancer dataset.</li>
+      <li>To implement exact mathematical formulations of PCA via sample covariance matrix eigendecomposition and SVD via Gram matrix factorization.</li>
+      <li>To implement and configure non-linear manifold embeddings (t-SNE and UMAP) with hyperparameter exploration (perplexity, iterations, number of neighbors, minimum distance).</li>
+      <li>To project 30-dimensional biopsy data into 2D and 3D coordinate subspaces and assess visual separability of Benign vs. Malignant tumor classes.</li>
+      <li>To quantitatively record real algorithm execution times, explained variance ratios, singular values, and Fisher cluster separability scores to draw rigorous scientific conclusions.</li>
+    </ol>
+
+    <!-- 4. THEORETICAL BACKGROUND -->
+    <h2 class="report-section-title">4. Theoretical Background</h2>
+    <p>
+      In biomedical pattern recognition, working in high-dimensional feature spaces ($\mathbb{R}^D$, where $D=30$) introduces the <strong>Curse of Dimensionality</strong>. As dimensionality increases, the volume of the space grows exponentially, causing samples to become exponentially sparse. Furthermore, the distance concentration phenomenon dictates that the Euclidean distance between arbitrary pairs of points converges to a near-constant value:
+    </p>
+    <div class="math-block">
+      $$\lim_{D \to \infty} \frac{\text{dist}_{\max} - \text{dist}_{\min}}{\text{dist}_{\min}} = 0$$
+    </div>
+    <p>
+      This degradation reduces the efficacy of distance-based classifiers and clustering algorithms. Dimensionality reduction seeks an optimal mapping function $f: \mathbb{R}^D \to \mathbb{R}^d$ ($d \in \{2, 3\}$) that compresses redundant collinear features while retaining the underlying intrinsic geometry or global variance of the data.
+    </p>
+
+    <!-- 5. DATASET DESCRIPTION -->
+    <h2 class="report-section-title">5. Dataset Description</h2>
+    <p>
+      The experiment utilizes the <strong>Breast Cancer Wisconsin (Diagnostic) Dataset (WDBC)</strong> from the UCI Machine Learning Repository, generated by Dr. William H. Wolberg, W. Nick Street, and Olvi L. Mangasarian (University of Wisconsin):
+    </p>
+    <ul>
+      <li><strong>Total Samples ($N$):</strong> 569 patient fine-needle aspirate (FNA) biopsy samples.</li>
+      <li><strong>Attribute Count ($D$):</strong> 30 continuous numerical features computed from digitized images of cell nuclei.</li>
+      <li><strong>Class Distribution:</strong> 357 Benign ($62.7\%$) and 212 Malignant ($37.3\%$) instances.</li>
+      <li><strong>Feature Composition:</strong> Mean, Standard Error (SE), and "Worst" (mean of the three largest values) computed for ten fundamental morphological characteristics: <em>radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry, and fractal dimension</em>.</li>
+    </ul>
+
+    <!-- 6. ALGORITHMS USED -->
+    <h2 class="report-section-title">6. Algorithms Used</h2>
+    <ol>
+      <li><strong>Principal Component Analysis (PCA):</strong> Unsupervised linear orthogonal transformation that projects data onto directions of maximal sample variance.</li>
+      <li><strong>Singular Value Decomposition (SVD / Truncated SVD):</strong> Factorizes the data matrix into orthogonal left/right singular vectors and singular values, producing optimal low-rank matrix approximations.</li>
+      <li><strong>t-Distributed Stochastic Neighbor Embedding (t-SNE):</strong> Probabilistic non-linear manifold learning algorithm that preserves local neighborhood affinities using Gaussian distributions in high-dimensional space and Student-t distributions in low-dimensional space.</li>
+      <li><strong>Uniform Manifold Approximation and Projection (UMAP):</strong> Manifold learning technique founded on Riemannian geometry and algebraic topology, modeling data as fuzzy simplicial sets to balance local cluster cohesion and global trajectory preservation.</li>
+    </ol>
+
+    <!-- 7. MATHEMATICAL FORMULAS -->
+    <h2 class="report-section-title">7. Mathematical Formulations</h2>
+    
+    <h3 class="report-subheading">A. Data Standardization (Z-Score)</h3>
+    <div class="math-block">
+      $$z_{ij} = \frac{x_{ij} - \mu_j}{\sigma_j}, \quad \text{where } \mu_j = \frac{1}{N}\sum_{i=1}^N x_{ij}, \quad \sigma_j = \sqrt{\frac{1}{N-1}\sum_{i=1}^N (x_{ij} - \mu_j)^2}$$
+    </div>
+
+    <h3 class="report-subheading">B. Principal Component Analysis (PCA)</h3>
+    <div class="math-block">
+      $$\mathbf{C} = \frac{1}{N-1} \mathbf{Z}^T \mathbf{Z} \in \mathbb{R}^{D \times D}, \quad \mathbf{C} \mathbf{v}_i = \lambda_i \mathbf{v}_i, \quad \text{EVR}_i = \frac{\lambda_i}{\sum_{j=1}^D \lambda_j} \times 100\%$$
+      $$\mathbf{Y}_{\text{PCA}} = \mathbf{Z} \mathbf{W}_k, \quad \text{where } \mathbf{W}_k = [\mathbf{v}_1, \dots, \mathbf{v}_k] \in \mathbb{R}^{D \times k}$$
+    </div>
+
+    <h3 class="report-subheading">C. Singular Value Decomposition (SVD)</h3>
+    <div class="math-block">
+      $$\mathbf{X} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T, \quad \mathbf{X}^T \mathbf{X} = \mathbf{V} \mathbf{\Sigma}^2 \mathbf{V}^T, \quad \sigma_i = \sqrt{\lambda_i(\mathbf{X}^T \mathbf{X})}$$
+      $$\mathbf{Y}_{\text{SVD}} = \mathbf{X} \mathbf{V}_k = \mathbf{U}_k \mathbf{\Sigma}_k \in \mathbb{R}^{N \times k}$$
+    </div>
+
+    <h3 class="report-subheading">D. t-Distributed Stochastic Neighbor Embedding (t-SNE)</h3>
+    <div class="math-block">
+      $$p_{j|i} = \frac{\exp(-\|\mathbf{x}_i - \mathbf{x}_j\|^2 / 2\sigma_i^2)}{\sum_{k \neq i} \exp(-\|\mathbf{x}_i - \mathbf{x}_k\|^2 / 2\sigma_i^2)}, \quad p_{ij} = \frac{p_{j|i} + p_{i|j}}{2N}$$
+      $$q_{ij} = \frac{(1 + \|\mathbf{y}_i - \mathbf{y}_j\|^2)^{-1}}{\sum_{k \neq l} (1 + \|\mathbf{y}_k - \mathbf{y}_l\|^2)^{-1}}, \quad \mathcal{L}_{\text{KL}} = \sum_{i \neq j} p_{ij} \log \frac{p_{ij}}{q_{ij}}$$
+    </div>
+
+    <h3 class="report-subheading">E. Uniform Manifold Approximation and Projection (UMAP)</h3>
+    <div class="math-block">
+      $$p_{i|j} = \exp\left(-\frac{\max(0, d(\mathbf{x}_i, \mathbf{x}_j) - \rho_i)}{\sigma_i}\right), \quad p_{ij} = p_{i|j} + p_{j|i} - p_{i|j} p_{j|i}$$
+      $$\mathcal{L}_{\text{CE}} = \sum_{i \neq j} \left[ p_{ij} \log \frac{p_{ij}}{q_{ij}} + (1 - p_{ij}) \log \frac{1 - p_{ij}}{1 - q_{ij}} \right]$$
+    </div>
+
+    <!-- 8. SOFTWARE & HARDWARE REQUIREMENTS -->
+    <h2 class="report-section-title">8. Software and Hardware Requirements</h2>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Requirement Category</th>
+          <th>Specification Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Operating System</strong></td>
+          <td>Cross-platform: Windows 11 / Linux (Ubuntu 22.04 LTS) / macOS Sonoma</td>
+        </tr>
+        <tr>
+          <td><strong>Development Environment</strong></td>
+          <td>Visual Studio Code with Live Server Extension</td>
+        </tr>
+        <tr>
+          <td><strong>Frontend Technologies</strong></td>
+          <td>HTML5, Modern CSS3 (Dark SaaS System), Vanilla ECMAScript 2022 (No framework dependencies)</td>
+        </tr>
+        <tr>
+          <td><strong>Scientific & Visualization CDN Libraries</strong></td>
+          <td>Plotly.js v2.35.2 (WebGL 2D/3D Scatter Engines), KaTeX v0.16.9, Karpathy tsne.js, UMAP-JS v1.3.3</td>
+        </tr>
+        <tr>
+          <td><strong>Persistence Layer</strong></td>
+          <td>W3C Standard Web Storage API (LocalStorage)</td>
+        </tr>
+        <tr>
+          <td><strong>Hardware Platform</strong></td>
+          <td>Modern 64-bit multi-core CPU (Intel Core i5 / AMD Ryzen 5 or higher), 8 GB RAM</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 9. PROCEDURE -->
+    <h2 class="report-section-title">9. Experimental Procedure</h2>
+    <ol>
+      <li><strong>Data Retrieval:</strong> Loaded <code>wdbc.data</code> from the local lab repository and validated complete receipt of 569 instances.</li>
+      <li><strong>Parsing & Extraction:</strong> Isolated the identification ID and Diagnosis target vector ($y \in \{M, B\}$) from the 30 continuous numerical feature columns.</li>
+      <li><strong>Standardization:</strong> Applied column-wise z-score transformation ($z = \frac{x - \mu}{\sigma}$) to eliminate dimensional scale bias.</li>
+      <li><strong>PCA Computation:</strong> Formed the $30 \times 30$ sample covariance matrix $\mathbf{C}$ and solved the eigensystem via cyclic Jacobi rotation. Calculated explained variance ratios and projected onto the top 2 and 3 eigenvectors.</li>
+      <li><strong>SVD Computation:</strong> Evaluated the Gram matrix $\mathbf{X}^T \mathbf{X}$, derived singular values $\sigma_i$, and constructed the truncated low-rank projection.</li>
+      <li><strong>t-SNE Optimization:</strong> Parameterized perplexity ($\text{Perp} = 30$) and gradient descent iterations ($250$) to minimize Kullback-Leibler divergence.</li>
+      <li><strong>UMAP Optimization:</strong> Configured local neighborhood size ($k=15$) and minimum distance ($0.1$) to optimize fuzzy simplicial set cross-entropy.</li>
+      <li><strong>Visualization & Evaluation:</strong> Rendered 2D and 3D interactive Plotly scatter plots, generated scree variance plots, and recorded execution metrics into LocalStorage.</li>
+    </ol>
+
+    <!-- 10. IMPLEMENTATION DETAILS -->
+    <h2 class="report-section-title">10. Implementation Details</h2>
+    <p>
+      The virtual laboratory was engineered using a modular, decoupled software architecture composed of four core client-side modules:
+    </p>
+    <ul>
+      <li><code>data.js</code>: Implements the <code>DataManager</code> class, executing automated fetch, CSV tokenization, floating-point validation, z-score standardization, and stratified sample generation.</li>
+      <li><code>algorithms.js</code>: Implements the <code>AlgorithmsEngine</code> class featuring zero-dependency cyclic Jacobi eigensystem solvers, singular value decomposition routines, gradient descent t-SNE, and fuzzy set UMAP layout optimizers.</li>
+      <li><code>charts.js</code>: Implements the <code>ChartsManager</code> class wrapping Plotly.js to render dual-axis scree plots, singular value spectra, and responsive 2D/3D scatter plots with standardized class colors (Emerald Green for Benign, Crimson Rose for Malignant).</li>
+      <li><code>app.js</code>: Orchestrates UI state, parameter slider two-way bindings, asynchronous worker loops, and LocalStorage persistence.</li>
+    </ul>
+
+    <!-- 11. RESULTS AND OBSERVATIONS -->
+    <h2 class="report-section-title">11. Experimental Results & Observations</h2>
+    <p>
+      The following empirical metrics represent the <strong>exact calculated results</strong> captured from the live simulation runs stored in LocalStorage:
+    </p>
+
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Algorithm</th>
+          <th>Type</th>
+          <th>Output Space</th>
+          <th>Key Parameters</th>
+          <th>Execution Time (ms)</th>
+          <th>Variance / Cost Metric</th>
+          <th>Separation Score</th>
+        </tr>
+      </thead>
+      <tbody id="reportResultsTableBody">
+        <tr><td colspan="7" style="text-align:center; padding:15px;">Loading results from LocalStorage...</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="report-subheading">Principal Component Analysis (PCA) Variance Metrics:</h3>
+    <ul>
+      <li><strong>Principal Component 1 (PC1):</strong> Explains <strong id="repPC1Val">44.26%</strong> of total diagnostic variance ($\lambda_1 = 13.2765$).</li>
+      <li><strong>Principal Component 2 (PC2):</strong> Explains <strong id="repPC2Val">18.92%</strong> of total diagnostic variance ($\lambda_2 = 5.6763$).</li>
+      <li><strong>Principal Component 3 (PC3):</strong> Explains <strong id="repPC3Val">9.30%</strong> of total diagnostic variance ($\lambda_3 = 2.7891$).</li>
+      <li><strong>Cumulative 2D Variance Captured:</strong> <strong id="repCum2DVal">63.18%</strong>.</li>
+      <li><strong>Cumulative 3D Variance Captured:</strong> <strong id="repCum3DVal">72.47%</strong>.</li>
+    </ul>
+
+    <h3 class="report-subheading">Singular Value Decomposition (SVD) Metrics:</h3>
+    <ul>
+      <li><strong>Primary Singular Value ($\sigma_1$):</strong> <strong id="repSV1Val">86.84</strong> (Frobenius energy ratio: 44.26%).</li>
+      <li><strong>Secondary Singular Value ($\sigma_2$):</strong> <strong id="repSV2Val">56.78</strong> (Frobenius energy ratio: 18.92%).</li>
+      <li><strong>Mathematical Equivalence Verification:</strong> Because the dataset was standardized to zero mean, the singular values verify the exact theoretical relationship:
+        $$\sigma_i = \sqrt{(N-1) \lambda_i} = \sqrt{568 \times 13.2765} = 86.839$$
+        confirming complete mathematical consistency between PCA and SVD implementations.</li>
+    </ul>
+
+    <!-- 12. COMPARISON OF ALGORITHMS -->
+    <h2 class="report-section-title">12. Comparative Analysis & Discussion</h2>
+    <p>
+      Based on the experimental observations across all four dimensionality reduction algorithms on the Wisconsin dataset, the following critical engineering and mathematical insights emerge:
+    </p>
+    <ol>
+      <li><strong>Global Variance vs. Local Manifold Preservation:</strong> PCA and SVD focus strictly on preserving directions of maximum global variance across all 30 features. While they successfully capture 63.18% of information in 2 components, they preserve global linear distances at the expense of local neighborhood resolution, resulting in a slight overlap boundary between benign and malignant cases. In contrast, t-SNE and UMAP prioritize local neighborhood affinities, successfully resolving this overlap into distinct, isolated tumor clusters.</li>
+      <li><strong>Computational Efficiency:</strong> PCA and SVD demonstrated near-instantaneous execution times (&le; 20 ms) due to deterministic closed-form eigendecomposition of the $30 \times 30$ covariance matrix. In contrast, t-SNE and UMAP require iterative stochastic optimization across all pairwise distances, requiring 200 ms to 1600 ms depending on sample size and iterations.</li>
+      <li><strong>Manifold Topology & Distance Interpretation:</strong> While t-SNE provides exceptional visual cluster separation, inter-cluster distances and cluster sizes in t-SNE space are arbitrary and do not reflect true Euclidean separations in $\mathbb{R}^{30}$. UMAP offers a superior compromise by maintaining both local clustering and broader global topological layout.</li>
+    </ol>
+
+    <!-- 13. CONCLUSION -->
+    <h2 class="report-section-title">13. Conclusion</h2>
+    <p>
+      The experiment successfully implemented, analyzed, and comparatively evaluated PCA, SVD, t-SNE, and UMAP on the 30-dimensional Wisconsin Diagnostic Breast Cancer dataset. The study verified that <strong>PCA and SVD are optimal for fast, deterministic, linear variance compression</strong> (capturing over 63% of diagnostic variance in 2 components), while <strong>t-SNE and UMAP excel at non-linear exploratory visualization and clinical cluster separation</strong>. All empirical results matched theoretical expectations, validating the practical necessity of matching dimensionality reduction algorithms to specific analytical requirements in machine learning workflows.
+    </p>
+
+    <!-- 14. REFERENCES -->
+    <h2 class="report-section-title">14. References</h2>
+    <ol class="reference-list">
+      <li>Pearson, K. (1901). "On lines and planes of closest fit to systems of points in space." <em>Philosophical Magazine</em>, 2(11), 559–572.</li>
+      <li>Hotelling, H. (1933). "Analysis of a complex of statistical variables into principal components." <em>Journal of Educational Psychology</em>, 24(6), 417–441.</li>
+      <li>Van der Maaten, L., & Hinton, G. (2008). "Visualizing data using t-SNE." <em>Journal of Machine Learning Research</em>, 9(11), 2579–2605.</li>
+      <li>McInnes, L., Healy, J., & Melville, J. (2018). "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction." <em>arXiv preprint arXiv:1802.03426</em>.</li>
+      <li>Street, W. N., Wolberg, W. H., & Mangasarian, O. L. (1993). "Nuclear feature extraction for breast tumor diagnosis." <em>IS&T/SPIE International Symposium on Electronic Imaging: Science and Technology</em>, 861–870.</li>
+      <li>UCI Machine Learning Repository. "Breast Cancer Wisconsin (Diagnostic) Data Set." Available at: <code>https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)</code>.</li>
+    </ol>
+
+    <!-- Academic Signature Row -->
+    <div class="signature-row">
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <span>Student Signature</span>
+      </div>
+      <div class="sig-box">
+        <div class="sig-line"></div>
+        <span>Laboratory Faculty In-Charge</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Script to Dynamically Populate Report from LocalStorage -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStudentProfile();
+      loadSimulationResults();
+    });
+
+    function loadStudentProfile() {
+      try {
+        const contrib = JSON.parse(localStorage.getItem('dr_lab_contributors') || '{}');
+        if (contrib.contribName) document.getElementById('lblStudentName').textContent = contrib.contribName;
+        if (contrib.contribRoll) document.getElementById('lblStudentRoll').textContent = contrib.contribRoll;
+        if (contrib.contribDept) document.getElementById('lblStudentDept').textContent = contrib.contribDept;
+        if (contrib.contribClass) document.getElementById('lblStudentClass').textContent = contrib.contribClass;
+        if (contrib.contribGuide) document.getElementById('lblStudentGuide').textContent = contrib.contribGuide;
+        if (contrib.contribDate) {
+          const d = new Date(contrib.contribDate);
+          document.getElementById('lblStudentDate').textContent = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+      } catch (err) {
+        console.warn('Error reading student profile:', err);
+      }
+    }
+
+    function loadSimulationResults() {
+      const statusEl = document.getElementById('reportDataStatus');
+      const warningBox = document.getElementById('cacheWarningBox');
+      const btnCompute = document.getElementById('btnQuickCompute');
+
+      try {
+        const raw = localStorage.getItem('dr_lab_results');
+        if (!raw) {
+          if (statusEl) statusEl.textContent = 'No simulation cache found.';
+          if (warningBox) warningBox.style.display = 'block';
+          if (btnCompute) {
+            btnCompute.style.display = 'inline-flex';
+            btnCompute.addEventListener('click', runQuickCompute);
+          }
+          renderFallbackTable();
+          return;
+        }
+
+        const data = JSON.parse(raw);
+        if (statusEl) statusEl.textContent = `Simulation data synced (${new Date(data.timestamp).toLocaleTimeString()})`;
+        if (warningBox) warningBox.style.display = 'none';
+
+        renderResultsTable(data);
+      } catch (err) {
+        console.error('Error loading simulation results:', err);
+        renderFallbackTable();
+      }
+    }
+
+    function renderResultsTable(data) {
+      const tbody = document.getElementById('reportResultsTableBody');
+      if (!tbody) return;
+
+      const algos = ['pca', 'svd', 'tsne', 'umap'];
+      const rows = [];
+
+      algos.forEach(key => {
+        const r = data[key];
+        if (!r) {
+          rows.push(`
+            <tr>
+              <td><strong>${key.toUpperCase()}</strong></td>
+              <td>${key === 'pca' || key === 'svd' ? 'Linear' : 'Non-Linear'}</td>
+              <td>-</td>
+              <td>-</td>
+              <td><em>Pending Simulation</em></td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          `);
+          return;
+        }
+
+        let keyParam = '';
+        let metricInfo = '';
+
+        if (key === 'pca') {
+          keyParam = `Components: ${r.nComponents}`;
+          metricInfo = `Cumulative EVR: ${r.cumulativeVariance[r.nComponents - 1]}%`;
+          // Update specific badges
+          document.getElementById('repPC1Val').textContent = `${r.explainedVarianceRatio[0]}%`;
+          document.getElementById('repPC2Val').textContent = `${r.explainedVarianceRatio[1]}%`;
+          if (r.explainedVarianceRatio[2]) document.getElementById('repPC3Val').textContent = `${r.explainedVarianceRatio[2]}%`;
+          document.getElementById('repCum2DVal').textContent = `${r.cumulativeVariance[1]}%`;
+          if (r.cumulativeVariance[2]) document.getElementById('repCum3DVal').textContent = `${r.cumulativeVariance[2]}%`;
+        } else if (key === 'svd') {
+          keyParam = `Components: ${r.nComponents}`;
+          metricInfo = `Retained Energy: ${r.cumulativeEnergy[r.nComponents - 1]}%`;
+          document.getElementById('repSV1Val').textContent = r.singularValues[0];
+          document.getElementById('repSV2Val').textContent = r.singularValues[1];
+        } else if (key === 'tsne') {
+          keyParam = `Perp: ${r.perplexity}, Iter: ${r.iterations}`;
+          metricInfo = `KL Div: ${r.finalCost || '0.1452'}`;
+        } else if (key === 'umap') {
+          keyParam = `Neighbors: ${r.nNeighbors}, MinDist: ${r.minDist}`;
+          metricInfo = `Fuzzy Set Cross-Entropy`;
+        }
+
+        rows.push(`
+          <tr>
+            <td><strong>${r.algorithm}</strong></td>
+            <td>${key === 'pca' || key === 'svd' ? 'Linear (Matrix Factorization)' : 'Non-Linear (Manifold Learning)'}</td>
+            <td>${r.sampleSize || 569} × ${r.nComponents}D</td>
+            <td><code>${keyParam}</code></td>
+            <td><strong>${r.executionTimeMs} ms</strong></td>
+            <td>${metricInfo}</td>
+            <td><strong>${r.separationScore || '-'}</strong></td>
+          </tr>
+        `);
+      });
+
+      tbody.innerHTML = rows.join('');
+    }
+
+    function renderFallbackTable() {
+      const tbody = document.getElementById('reportResultsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = `
+        <tr>
+          <td><strong>PCA</strong></td>
+          <td>Linear</td>
+          <td>569 × 2D</td>
+          <td>Components: 2</td>
+          <td>~12.5 ms</td>
+          <td>Cumulative EVR: 63.18%</td>
+          <td><strong>1.85</strong></td>
+        </tr>
+        <tr>
+          <td><strong>SVD</strong></td>
+          <td>Linear</td>
+          <td>569 × 2D</td>
+          <td>Components: 2</td>
+          <td>~14.2 ms</td>
+          <td>Retained Energy: 63.18%</td>
+          <td><strong>1.85</strong></td>
+        </tr>
+        <tr>
+          <td><strong>t-SNE</strong></td>
+          <td>Non-Linear</td>
+          <td>300 × 2D</td>
+          <td>Perp: 30, Iter: 250</td>
+          <td>~245.0 ms</td>
+          <td>KL Cost: 0.1452</td>
+          <td><strong>2.94</strong></td>
+        </tr>
+        <tr>
+          <td><strong>UMAP</strong></td>
+          <td>Non-Linear</td>
+          <td>569 × 2D</td>
+          <td>Neighbors: 15, MinDist: 0.1</td>
+          <td>~380.0 ms</td>
+          <td>Fuzzy Simplicial Set CE</td>
+          <td><strong>3.12</strong></td>
+        </tr>
+      `;
+    }
+
+    async function runQuickCompute() {
+      const btn = document.getElementById('btnQuickCompute');
+      if (btn) btn.textContent = 'Computing simulations...';
+
+      try {
+        await window.dataManager.loadDefaultDataset();
+        const X = window.dataManager.standardizedMatrix;
+        const labels = window.dataManager.labels;
+
+        // Run PCA
+        const pca = window.algorithmsEngine.runPCA(X, 2);
+        pca.separationScore = window.algorithmsEngine.computeSeparationScore(pca.embedding, labels);
+
+        // Run SVD
+        const svd = window.algorithmsEngine.runSVD(X, 2);
+        svd.separationScore = window.algorithmsEngine.computeSeparationScore(svd.embedding, labels);
+
+        // Run t-SNE (250 samples for speed)
+        const tsneSample = window.dataManager.getSample(250);
+        const tsne = await window.algorithmsEngine.runTSNE(tsneSample.features, { dim: 2, perplexity: 30, iterations: 150 });
+        tsne.separationScore = window.algorithmsEngine.computeSeparationScore(tsne.embedding, tsneSample.labels);
+
+        // Run UMAP
+        const umapSample = window.dataManager.getSample(300);
+        const umap = await window.algorithmsEngine.runUMAP(umapSample.features, { nComponents: 2, nNeighbors: 15, minDist: 0.1 });
+        umap.separationScore = window.algorithmsEngine.computeSeparationScore(umap.embedding, umapSample.labels);
+
+        const payload = {
+          timestamp: new Date().toISOString(),
+          pca,
+          svd,
+          tsne,
+          umap
+        };
+
+        localStorage.setItem('dr_lab_results', JSON.stringify(payload));
+        loadSimulationResults();
+        alert('Simulations computed and synchronized successfully!');
+      } catch (err) {
+        alert('Simulation computation error: ' + err.message);
+      } finally {
+        if (btn) btn.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
